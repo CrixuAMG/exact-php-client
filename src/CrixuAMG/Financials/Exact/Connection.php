@@ -162,7 +162,7 @@ class Connection
     {
         // Redirect for authorization if needed (no access token or refresh token given)
         if ($this->needsAuthentication()) {
-            $this->redirectForAuthorization();
+            return $this->redirectForAuthorization();
         }
 
         // If access token is not set or token has expired, acquire new token
@@ -308,10 +308,10 @@ class Connection
     public function getAuthUrl()
     {
         return $this->baseUrl . $this->authUrl . '?' . http_build_query([
-            'client_id'     => $this->exactClientId,
-            'redirect_uri'  => $this->redirectUrl,
-            'response_type' => 'code',
-        ]);
+                'client_id'     => $this->exactClientId,
+                'redirect_uri'  => $this->redirectUrl,
+                'response_type' => 'code',
+            ]);
     }
 
     /**
@@ -356,9 +356,7 @@ class Connection
 
     public function redirectForAuthorization()
     {
-        $authUrl = $this->getAuthUrl();
-        header('Location: ' . $authUrl);
-        exit;
+        return $this->getAuthUrl();
     }
 
     /**
