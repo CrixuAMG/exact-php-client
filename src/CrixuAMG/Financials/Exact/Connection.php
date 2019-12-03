@@ -176,11 +176,11 @@ class Connection
     }
 
     /**
-     * @param string $method
-     * @param string $endpoint
-     * @param mixed  $body
-     * @param array  $params
-     * @param array  $headers
+     * @param  string  $method
+     * @param  string  $endpoint
+     * @param  mixed  $body
+     * @param  array  $params
+     * @param  array  $headers
      *
      * @return Request
      */
@@ -199,13 +199,13 @@ class Connection
         }
 
         // If we have a token, sign the request
-        if (! $this->needsAuthentication() && ! empty($this->accessToken)) {
-            $headers['Authorization'] = 'Bearer ' . $this->accessToken;
+        if (!$this->needsAuthentication() && !empty($this->accessToken)) {
+            $headers['Authorization'] = 'Bearer '.$this->accessToken;
         }
 
         // Create param string
-        if (! empty($params)) {
-            $endpoint .= '?' . http_build_query($params);
+        if (!empty($params)) {
+            $endpoint .= '?'.http_build_query($params);
         }
 
         // Create the request
@@ -215,13 +215,13 @@ class Connection
     }
 
     /**
-     * @param string $url
-     * @param array  $params
-     * @param array  $headers
-     *
-     * @throws ApiException
+     * @param  string  $url
+     * @param  array  $params
+     * @param  array  $headers
      *
      * @return mixed
+     * @throws ApiException
+     *
      */
     public function get($url, array $params = [], array $headers = [])
     {
@@ -238,12 +238,12 @@ class Connection
     }
 
     /**
-     * @param string $url
-     * @param mixed  $body
-     *
-     * @throws ApiException
+     * @param  string  $url
+     * @param  mixed  $body
      *
      * @return mixed
+     * @throws ApiException
+     *
      */
     public function post($url, $body)
     {
@@ -260,12 +260,12 @@ class Connection
     }
 
     /**
-     * @param string $url
-     * @param mixed  $body
-     *
-     * @throws ApiException
+     * @param  string  $url
+     * @param  mixed  $body
      *
      * @return mixed
+     * @throws ApiException
+     *
      */
     public function put($url, $body)
     {
@@ -282,11 +282,11 @@ class Connection
     }
 
     /**
-     * @param string $url
-     *
-     * @throws ApiException
+     * @param  string  $url
      *
      * @return mixed
+     * @throws ApiException
+     *
      */
     public function delete($url)
     {
@@ -307,15 +307,16 @@ class Connection
      */
     public function getAuthUrl()
     {
-        return $this->baseUrl . $this->authUrl . '?' . http_build_query([
+        return $this->baseUrl.$this->authUrl.'?'.http_build_query([
                 'client_id'     => $this->exactClientId,
                 'redirect_uri'  => $this->redirectUrl,
                 'response_type' => 'code',
+                'force'         => 1,
             ]);
     }
 
     /**
-     * @param mixed $exactClientId
+     * @param  mixed  $exactClientId
      */
     public function setExactClientId($exactClientId)
     {
@@ -323,7 +324,7 @@ class Connection
     }
 
     /**
-     * @param mixed $exactClientSecret
+     * @param  mixed  $exactClientSecret
      */
     public function setExactClientSecret($exactClientSecret)
     {
@@ -331,7 +332,7 @@ class Connection
     }
 
     /**
-     * @param mixed $authorizationCode
+     * @param  mixed  $authorizationCode
      */
     public function setAuthorizationCode($authorizationCode)
     {
@@ -339,7 +340,7 @@ class Connection
     }
 
     /**
-     * @param mixed $accessToken
+     * @param  mixed  $accessToken
      */
     public function setAccessToken($accessToken)
     {
@@ -347,7 +348,7 @@ class Connection
     }
 
     /**
-     * @param mixed $refreshToken
+     * @param  mixed  $refreshToken
      */
     public function setRefreshToken($refreshToken)
     {
@@ -360,7 +361,7 @@ class Connection
     }
 
     /**
-     * @param mixed $redirectUrl
+     * @param  mixed  $redirectUrl
      */
     public function setRedirectUrl($redirectUrl)
     {
@@ -376,12 +377,12 @@ class Connection
     }
 
     /**
-     * @param Response $response
-     * @param bool     $returnSingleIfPossible
-     *
-     * @throws ApiException
+     * @param  Response  $response
+     * @param  bool  $returnSingleIfPossible
      *
      * @return mixed
+     * @throws ApiException
+     *
      */
     private function parseResponse(Response $response, $returnSingleIfPossible = true)
     {
@@ -395,7 +396,7 @@ class Connection
             Psr7\rewind_body($response);
             $json = json_decode($response->getBody()->getContents(), true);
             if (false === is_array($json)) {
-                throw new ApiException('Json decode failed. Got response: ' . $response->getBody()->getContents());
+                throw new ApiException('Json decode failed. Got response: '.$response->getBody()->getContents());
             }
             if (array_key_exists('d', $json)) {
                 if (array_key_exists('__next', $json['d'])) {
@@ -493,10 +494,11 @@ class Connection
                     call_user_func($this->tokenUpdateCallback, $this);
                 }
             } else {
-                throw new ApiException('Could not acquire tokens, json decode failed. Got response: ' . $response->getBody()->getContents());
+                throw new ApiException('Could not acquire tokens, json decode failed. Got response: '.$response->getBody()->getContents());
             }
         } catch (BadResponseException $ex) {
-            throw new ApiException('Could not acquire or refresh tokens [http ' . $ex->getResponse()->getStatusCode() . ']', 0, $ex);
+            throw new ApiException('Could not acquire or refresh tokens [http '.$ex->getResponse()->getStatusCode().']',
+                0, $ex);
         } finally {
             if (is_callable($this->acquireAccessTokenUnlockCallback)) {
                 call_user_func($this->acquireAccessTokenUnlockCallback, $this);
@@ -507,13 +509,13 @@ class Connection
     /**
      * Translates expires_in to a Unix timestamp.
      *
-     * @param string $expiresIn number of seconds until the token expires
+     * @param  string  $expiresIn  number of seconds until the token expires
      *
      * @return int
      */
     private function getTimestampFromExpiresIn($expiresIn)
     {
-        if (! ctype_digit($expiresIn)) {
+        if (!ctype_digit($expiresIn)) {
             throw new \InvalidArgumentException('Function requires a numeric expires value');
         }
 
@@ -529,7 +531,7 @@ class Connection
     }
 
     /**
-     * @param int $tokenExpires the Unix timestamp at which the access token expires
+     * @param  int  $tokenExpires  the Unix timestamp at which the access token expires
      */
     public function setTokenExpires($tokenExpires)
     {
@@ -574,7 +576,7 @@ class Connection
     }
 
     /**
-     * @param mixed $division
+     * @param  mixed  $division
      */
     public function setDivision($division)
     {
@@ -582,7 +584,7 @@ class Connection
     }
 
     /**
-     * @param callable $callback
+     * @param  callable  $callback
      */
     public function setAcquireAccessTokenLockCallback($callback)
     {
@@ -590,7 +592,7 @@ class Connection
     }
 
     /**
-     * @param callable $callback
+     * @param  callable  $callback
      */
     public function setAcquireAccessTokenUnlockCallback($callback)
     {
@@ -598,7 +600,7 @@ class Connection
     }
 
     /**
-     * @param callable $callback
+     * @param  callable  $callback
      */
     public function setTokenUpdateCallback($callback)
     {
@@ -608,13 +610,13 @@ class Connection
     /**
      * Parse the reponse in the Exception to return the Exact error messages.
      *
-     * @param Exception $e
+     * @param  Exception  $e
      *
      * @throws ApiException
      */
     private function parseExceptionForErrorMessages(Exception $e)
     {
-        if (! $e instanceof BadResponseException) {
+        if (!$e instanceof BadResponseException) {
             throw new ApiException($e->getMessage(), 0, $e);
         }
 
@@ -626,13 +628,13 @@ class Connection
         $responseBody = $response->getBody()->getContents();
         $decodedResponseBody = json_decode($responseBody, true);
 
-        if (! is_null($decodedResponseBody) && isset($decodedResponseBody['error']['message']['value'])) {
+        if (!is_null($decodedResponseBody) && isset($decodedResponseBody['error']['message']['value'])) {
             $errorMessage = $decodedResponseBody['error']['message']['value'];
         } else {
             $errorMessage = $responseBody;
         }
 
-        throw new ApiException('Error ' . $response->getStatusCode() . ': ' . $errorMessage, $response->getStatusCode(), $e);
+        throw new ApiException('Error '.$response->getStatusCode().': '.$errorMessage, $response->getStatusCode(), $e);
     }
 
     /**
@@ -688,7 +690,7 @@ class Connection
      */
     private function getApiUrl()
     {
-        return $this->baseUrl . $this->apiUrl;
+        return $this->baseUrl.$this->apiUrl;
     }
 
     /**
@@ -696,14 +698,14 @@ class Connection
      */
     private function getTokenUrl()
     {
-        return $this->baseUrl . $this->tokenUrl;
+        return $this->baseUrl.$this->tokenUrl;
     }
 
     /**
      * Set base URL for different countries according to
      * https://developers.exactonline.com/#Exact%20Online%20sites.html.
      *
-     * @param string $baseUrl
+     * @param  string  $baseUrl
      */
     public function setBaseUrl($baseUrl)
     {
@@ -711,7 +713,7 @@ class Connection
     }
 
     /**
-     * @param string $apiUrl
+     * @param  string  $apiUrl
      */
     public function setApiUrl($apiUrl)
     {
@@ -719,7 +721,7 @@ class Connection
     }
 
     /**
-     * @param string $authUrl
+     * @param  string  $authUrl
      */
     public function setAuthUrl($authUrl)
     {
@@ -727,7 +729,7 @@ class Connection
     }
 
     /**
-     * @param string $tokenUrl
+     * @param  string  $tokenUrl
      */
     public function setTokenUrl($tokenUrl)
     {
