@@ -1,6 +1,6 @@
 # exact-php-client
 
-[![Build Status](https://travis-ci.org/picqer/exact-php-client.svg?branch=master)](https://travis-ci.org/picqer/exact-php-client)
+[![Build Status](https://travis-ci.org/CrixuAMG/exact-php-client.svg?branch=master)](https://travis-ci.org/CrixuAMG/exact-php-client)
 
 PHP client library to use the Exact Online API.
 
@@ -13,7 +13,7 @@ https://support.exactonline.com/community/s/knowledge-base#All-All-DNO-Content-g
 Installing this Exact client for PHP can be done through Composer.
 
 ```
-composer require picqer/exact-php-client
+composer require CrixuAMG/exact-php-client
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ You will also need to set the correct `Callback URL` for the oAuth dance to work
 The code below is an example `authorize()` function.
 
 ```php
-$connection = new \Picqer\Financials\Exact\Connection();
+$connection = new \CrixuAMG\Financials\Exact\Connection();
 $connection->setRedirectUrl('CALLBACK_URL'); // Same as entered online in the App Center
 $connection->setExactClientId('CLIENT_ID');
 $connection->setExactClientSecret('CLIENT_SECRET');
@@ -56,7 +56,7 @@ The library will settle all of this for you. The code below could be an general 
 the api connection.
 
 ```php
-$connection = new \Picqer\Financials\Exact\Connection();
+$connection = new \CrixuAMG\Financials\Exact\Connection();
 $connection->setRedirectUrl('CALLBACK_URL');
 $connection->setExactClientId('CLIENT_ID');
 $connection->setExactClientSecret('CLIENT_SECRET');
@@ -182,25 +182,25 @@ $printedInvoice->save();
 Choose the right base URL according to [Exact developers guide](https://developers.exactonline.com/#Exact%20Online%20sites.html)
 
 ```php
-$connection = new \Picqer\Financials\Exact\Connection();
+$connection = new \CrixuAMG\Financials\Exact\Connection();
 $connection->setRedirectUrl('CALLBACK_URL');
 $connection->setExactClientId('CLIENT_ID');
 $connection->setExactClientSecret('CLIENT_SECRET');
 $connection->setBaseUrl('https://start.exactonline.de');
 ```
 
-Check [src/Picqer/Financials/Exact](src/Picqer/Financials/Exact) for all available entities.
+Check [src/CrixuAMG/Financials/Exact](src/CrixuAMG/Financials/Exact) for all available entities.
 
 ## Webhooks
 
-Managaging webhook subscriptions is possible through the [WebhookSubscription](src/Picqer/Financials/Exact/WebhookSubscription.php) entitiy.
+Managaging webhook subscriptions is possible through the [WebhookSubscription](src/CrixuAMG/Financials/Exact/WebhookSubscription.php) entitiy.
 
-For authenticating incoming webhook calls you can use the [Authenticatable](src/Picqer/Financials/Exact/Webhook/Authenticatable.php) trait.
+For authenticating incoming webhook calls you can use the [Authenticatable](src/CrixuAMG/Financials/Exact/Webhook/Authenticatable.php) trait.
 Supply the authenticate method with the full JSON request and your Webhook secret supplied by Exact, it will return true or false.
 
 ## Troubleshooting
 
-> 'Picqer\Financials\Exact\ApiException' with message 'Error 400: Please add a $select or a $top=1 statement to the query string.'
+> 'CrixuAMG\Financials\Exact\ApiException' with message 'Error 400: Please add a $select or a $top=1 statement to the query string.'
 
 In specific instances, sadly not documented in the API documentation of Exact this is a requirement. Probably to prevent overflooding requests. What you have to do when encountering this error is adding a select or top. The select is used to provide a list of fields you want to extract, the $top=1 limits the results to one item.
 

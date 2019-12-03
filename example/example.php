@@ -37,7 +37,7 @@ function setValue($key, $value)
  */
 function authorize()
 {
-    $connection = new \Picqer\Financials\Exact\Connection();
+    $connection = new \CrixuAMG\Financials\Exact\Connection();
     $connection->setRedirectUrl('__REDIRECT_URL__');
     $connection->setExactClientId('__CLIENT_ID__');
     $connection->setExactClientSecret('__CLIENT_SECRET__');
@@ -47,9 +47,9 @@ function authorize()
 /**
  * Callback function that sets values that expire and are refreshed by Connection.
  *
- * @param \Picqer\Financials\Exact\Connection $connection
+ * @param \CrixuAMG\Financials\Exact\Connection $connection
  */
-function tokenUpdateCallback(\Picqer\Financials\Exact\Connection $connection)
+function tokenUpdateCallback(\CrixuAMG\Financials\Exact\Connection $connection)
 {
     // Save the new tokens for next connections
     setValue('accesstoken', $connection->getAccessToken());
@@ -64,11 +64,11 @@ function tokenUpdateCallback(\Picqer\Financials\Exact\Connection $connection)
  *
  * @throws Exception
  *
- * @return \Picqer\Financials\Exact\Connection
+ * @return \CrixuAMG\Financials\Exact\Connection
  */
 function connect()
 {
-    $connection = new \Picqer\Financials\Exact\Connection();
+    $connection = new \CrixuAMG\Financials\Exact\Connection();
     $connection->setRedirectUrl('__REDIRECT_URL__');
     $connection->setExactClientId('__CLIENT_ID__');
     $connection->setExactClientSecret('__CLIENT_SECRET__');
@@ -121,7 +121,7 @@ $connection = connect();
 
 // Get the journals from our administration
 try {
-    $journals = new \Picqer\Financials\Exact\Journal($connection);
+    $journals = new \CrixuAMG\Financials\Exact\Journal($connection);
     $result = $journals->get();
     foreach ($result as $journal) {
         echo 'Journal: ' . $journal->Description . '<br>';

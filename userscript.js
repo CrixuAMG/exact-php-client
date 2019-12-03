@@ -69,11 +69,11 @@
   });
 
   /** Build php code **/
-  phptxt = "<?php\n\nnamespace Picqer\\Financials\\Exact;\n\n/**";
+  phptxt = "<?php\n\nnamespace CrixuAMG\\Financials\\Exact;\n\n/**";
 
   // Build docblock
   phptxt += "\n * Class " + classname;
-  phptxt += "\n *\n * @package Picqer\\Financials\\Exact";
+  phptxt += "\n *\n * @package CrixuAMG\\Financials\\Exact";
   phptxt += "\n * @see " + window.location.href;
   phptxt += "\n *";
   $.each(data,function(attribute, info){
