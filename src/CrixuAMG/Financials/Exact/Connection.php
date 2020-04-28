@@ -88,6 +88,11 @@ class Connection
     /**
      * @var callable(Connection)
      */
+    private $onHttpAction;
+
+    /**
+     * @var callable(Connection)
+     */
     private $acquireAccessTokenLockCallback;
 
     /**
@@ -227,8 +232,12 @@ class Connection
     {
         $url = $this->formatUrl($url, $url !== 'current/Me', $url == $this->nextUrl);
 
+        if (is_callable($this->onHttpAction)) {
+            call_user_func($this->onHttpAction, 'GET', $url);
+        }
+
         try {
-            $request = $this->createRequest('GET', $url, null, $params, $headers);
+            $request  = $this->createRequest('GET', $url, null, $params, $headers);
             $response = $this->client()->send($request);
 
             return $this->parseResponse($response, $url != $this->nextUrl);
@@ -249,8 +258,12 @@ class Connection
     {
         $url = $this->formatUrl($url);
 
+        if (is_callable($this->onHttpAction)) {
+            call_user_func($this->onHttpAction, 'POST', $url);
+        }
+
         try {
-            $request = $this->createRequest('POST', $url, $body);
+            $request  = $this->createRequest('POST', $url, $body);
             $response = $this->client()->send($request);
 
             return $this->parseResponse($response);
@@ -271,8 +284,12 @@ class Connection
     {
         $url = $this->formatUrl($url);
 
+        if (is_callable($this->onHttpAction)) {
+            call_user_func($this->onHttpAction, 'PUT', $url);
+        }
+
         try {
-            $request = $this->createRequest('PUT', $url, $body);
+            $request  = $this->createRequest('PUT', $url, $body);
             $response = $this->client()->send($request);
 
             return $this->parseResponse($response);
@@ -292,8 +309,12 @@ class Connection
     {
         $url = $this->formatUrl($url);
 
+        if (is_callable($this->onHttpAction)) {
+            call_user_func($this->onHttpAction, 'DELETE', $url);
+        }
+
         try {
-            $request = $this->createRequest('DELETE', $url);
+            $request  = $this->createRequest('DELETE', $url);
             $response = $this->client()->send($request);
 
             return $this->parseResponse($response);
@@ -428,7 +449,7 @@ class Connection
     private function getCurrentDivisionNumber()
     {
         if (empty($this->division)) {
-            $me = new Me($this);
+            $me             = new Me($this);
             $this->division = $me->find()->CurrentDivision;
         }
 
@@ -486,7 +507,7 @@ class Connection
             $body = json_decode($response->getBody()->getContents(), true);
 
             if (json_last_error() === JSON_ERROR_NONE) {
-                $this->accessToken = $body['access_token'];
+                $this->accessToken  = $body['access_token'];
                 $this->refreshToken = $body['refresh_token'];
                 $this->tokenExpires = $this->getTimestampFromExpiresIn($body['expires_in']);
 
@@ -608,6 +629,14 @@ class Connection
     }
 
     /**
+     * @param  callable  $callback
+     */
+    public function setOnHttpAction($callback)
+    {
+        $this->onHttpAction = $callback;
+    }
+
+    /**
      * Parse the reponse in the Exception to return the Exact error messages.
      *
      * @param  Exception  $e
@@ -625,7 +654,7 @@ class Connection
         $this->extractRateLimits($response);
 
         Psr7\rewind_body($response);
-        $responseBody = $response->getBody()->getContents();
+        $responseBody        = $response->getBody()->getContents();
         $decodedResponseBody = json_decode($responseBody, true);
 
         if (!is_null($decodedResponseBody) && isset($decodedResponseBody['error']['message']['value'])) {
@@ -738,11 +767,11 @@ class Connection
 
     private function extractRateLimits(Response $response)
     {
-        $this->dailyLimit = (int) $response->getHeaderLine('X-RateLimit-Limit');
+        $this->dailyLimit          = (int) $response->getHeaderLine('X-RateLimit-Limit');
         $this->dailyLimitRemaining = (int) $response->getHeaderLine('X-RateLimit-Remaining');
-        $this->dailyLimitReset = (int) $response->getHeaderLine('X-RateLimit-Reset');
+        $this->dailyLimitReset     = (int) $response->getHeaderLine('X-RateLimit-Reset');
 
-        $this->minutelyLimit = (int) $response->getHeaderLine('X-RateLimit-Minutely-Limit');
+        $this->minutelyLimit          = (int) $response->getHeaderLine('X-RateLimit-Minutely-Limit');
         $this->minutelyLimitRemaining = (int) $response->getHeaderLine('X-RateLimit-Minutely-Remaining');
     }
 }
